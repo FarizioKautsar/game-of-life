@@ -39,7 +39,6 @@ function getLinePoints(x0: number, y0: number, x1: number, y1: number) {
 
 export default function Home() {
   const [step, setStep] = useState<number>(0);
-  const [zoom, setZoom] = useState<number>(0);
   const { watch, setValue, getValues } = useForm();
   const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE);
   const [gridSize, setGridSize] = useState<number[]>([0, 0]);
@@ -86,11 +85,8 @@ export default function Home() {
     const newMatrix = [...(getValues("matrix") || [])].map((xCoords) => [
       ...(xCoords || []),
     ]);
-    for (const xStr in Array.from({ length: xSize })) {
-      const x = Number(xStr);
-      for (const yStr in Array.from({ length: ySize })) {
-        const y = Number(yStr);
-
+    for (let x = 0; x < xSize; x++) {
+      for (let y = 0; y < ySize; y++) {
         const neighbors = [
           newMatrix[x - 1]?.[y - 1] || false,
           newMatrix[x - 1]?.[y] || false,
@@ -221,7 +217,6 @@ export default function Home() {
                 <Cell
                   key={y}
                   cellSize={cellSize}
-                  zoom={zoom}
                   onMouseEnter={() => {
                     handleMouseHover(x, y);
                   }}

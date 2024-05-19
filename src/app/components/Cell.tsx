@@ -3,7 +3,6 @@ import { MouseEvent } from "react";
 import { DEFAULT_CELL_SIZE } from "../page";
 
 export default function Cell({
-  zoom = 0,
   onMouseEnter,
   onMouseDown,
   onMouseUp,
@@ -11,7 +10,6 @@ export default function Cell({
   active,
   cellSize
 }: {
-  zoom: number;
   cellSize: number;
   onMouseEnter: (event: MouseEvent) => void;
   onMouseDown?: (event: MouseEvent) => void;
