@@ -6,11 +6,13 @@ const DEFAULT_CELL_SIZE = 20;
 export default function Cell({
   zoom = 0,
   onMouseEnter,
+  onClick,
   active,
   isHovered,
 }: {
   zoom: number;
   onMouseEnter: (event: MouseEvent) => void;
+  onClick: (event: MouseEvent) => void;
   active: boolean;
   isHovered?: boolean;
 }) {
@@ -27,6 +29,7 @@ export default function Cell({
         active ? "bg-white border-0" : "bg-transparent",
       )}
       onMouseEnter={onMouseEnter}
+      onClick={onClick}
     ></div>
   );
 }

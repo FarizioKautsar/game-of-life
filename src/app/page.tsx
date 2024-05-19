@@ -109,6 +109,10 @@ export default function Home() {
     }
   };
 
+  function handleClearCell(x: number, y: number) {
+    setValue(`matrix.${x}.${y}`, false);
+  }
+
   return (
     <main>
       <div className="fixed top-4 left-4 items-center">
@@ -140,6 +144,7 @@ export default function Home() {
                 isHovered={hoveredCoord[0] === x && hoveredCoord[1] === y}
                 onMouseEnter={() => handleMouseHover(x, y)}
                 active={watch(`matrix.${x}.${y}`) || false}
+                onClick={() => handleClearCell(x, y)}
               />
             ))}
           </div>
