@@ -1,5 +1,5 @@
 "use client";
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Cell from "./components/Cell";
 import { useForm } from "react-hook-form";
 import Button from "./components/Button";
@@ -8,27 +8,59 @@ export default function Home() {
   const [step, setStep] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(0);
   const { watch, setValue, getValues } = useForm();
-  const [hoveredCoord, setHoveredCoord] = useState<number[]>([0, 0]);
   const [canvasSize, setCanvasSize] = useState<number[]>([100, 100]);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [xSize, ySize] = canvasSize;
+  const [lastIndices, setLastIndices] = useState<{ x: number; y: number }>({
+    x: -1,
+    y: -1,
+  });
   const [isInit, setIsInit] = useState(true);
 
-  useEffect(() => {
+  function handleMouseHover(x: number, y: number) {
     if (isDrawing) {
-      const [x, y] = hoveredCoord;
-      if (isInit) {
-        setValue(`initMatrix.${x}.${y}`, true);
+      const matrix = [...(getValues("matrix") || [])];
+      const lastCell = Boolean(matrix[x]?.[y]);
+      if (!lastCell) {
+        const points = getLinePoints(x, y, lastIndices.x, lastIndices.y);
+        points.forEach((point) => {
+          if (isInit) {
+            setValue(`initMatrix.${point.x}.${point.y}`, true);
+          }
+          setValue(`matrix.${point.x}.${point.y}`, true);
+        });
       }
-      setValue(`matrix.${x}.${y}`, true);
     }
-  }, [isDrawing, hoveredCoord, setValue, isInit]);
+    setLastIndices({ x, y });
+  }
 
-  function handleMouseHover(
-    x: number,
-    y: number
-  ) {
-    setHoveredCoord([x, y]);
+  function getLinePoints(x0: number, y0: number, x1: number, y1: number) {
+    const points: { x: number; y: number }[] = [];
+    const dx = Math.abs(x1 - x0);
+    const dy = Math.abs(y1 - y0);
+    const sx = x0 < x1 ? 1 : -1;
+    const sy = y0 < y1 ? 1 : -1;
+    let err = dx - dy;
+
+    let x = x0;
+    let y = y0;
+
+    while (true) {
+      points.push({ x, y });
+
+      if (x === x1 && y === y1) break;
+      const e2 = 2 * err;
+      if (e2 > -dy) {
+        err -= dy;
+        x += sx;
+      }
+      if (e2 < dx) {
+        err += dx;
+        y += sy;
+      }
+    }
+
+    return points;
   }
 
   function nextStep() {
@@ -109,7 +141,7 @@ export default function Home() {
     }
   };
 
-  function handleClearCell(x: number, y: number) {
+  function handleToggleCell(x: number, y: number) {
     setValue(`matrix.${x}.${y}`, false);
   }
 
@@ -131,22 +163,25 @@ export default function Home() {
         </Button>
         <span className="ml-2">Step: {step}</span>
       </div>
-      <div
-        onMouseDown={() => setIsDrawing(true)}
-        onMouseUp={() => setIsDrawing(false)}
-      >
+      <div>
         {Array.from({ length: xSize }).map((_x, x) => (
           <div className="flex" key={x}>
-            {Array.from({ length: ySize }).map((_y, y) => (
-              <Cell
-                key={y}
-                zoom={zoom}
-                isHovered={hoveredCoord[0] === x && hoveredCoord[1] === y}
-                onMouseEnter={() => handleMouseHover(x, y)}
-                active={watch(`matrix.${x}.${y}`) || false}
-                onClick={() => handleClearCell(x, y)}
-              />
-            ))}
+            {Array.from({ length: ySize }).map((_y, y) => {
+              const active = watch(`matrix.${x}.${y}`) || false;
+              return (
+                <Cell
+                  key={y}
+                  zoom={zoom}
+                  onMouseEnter={() => {
+                    handleMouseHover(x, y);
+                  }}
+                  onMouseDown={() => setIsDrawing(true)}
+                  onMouseUp={() => setIsDrawing(false)}
+                  active={active}
+                  onClick={() => active && handleToggleCell(x, y)}
+                />
+              );
+            })}
           </div>
         ))}
       </div>
