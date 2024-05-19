@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { MouseEvent } from "react";
 
 const DEFAULT_CELL_SIZE = 20;
@@ -6,22 +7,25 @@ export default function Cell({
   zoom = 0,
   onMouseEnter,
   active,
-  coord,
+  isHovered,
 }: {
   zoom: number;
-  coord: number[];
   onMouseEnter: (event: MouseEvent) => void;
   active: boolean;
+  isHovered?: boolean;
 }) {
-  const [x, y] = coord;
   return (
     <div
       style={{
         width: Math.max(DEFAULT_CELL_SIZE + zoom),
         height: Math.max(DEFAULT_CELL_SIZE + zoom),
-        backgroundColor: active ? "white" : "transparent",
       }}
-      className="border-gray-600 border-[1px] flex-shrink-0 text-red-500 cursor-pointer"
+      className={classNames(
+        "transition-all duration-150",
+        "border-[1px] flex-shrink-0 text-red-500 cursor-pointer",
+        isHovered ? "border-gray-600" : "border-gray-800",
+        active ? "bg-white border-0" : "bg-transparent",
+      )}
       onMouseEnter={onMouseEnter}
     ></div>
   );

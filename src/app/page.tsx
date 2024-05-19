@@ -25,7 +25,6 @@ export default function Home() {
   }, [isDrawing, hoveredCoord, setValue, isInit]);
 
   function handleMouseHover(
-    event: MouseEvent<Element, globalThis.MouseEvent>,
     x: number,
     y: number
   ) {
@@ -65,12 +64,14 @@ export default function Home() {
   }
 
   function handleClear() {
+    setIsInit(true);
     setStep(0);
     stopPlaying();
     setValue("matrix", []);
   }
 
   function handleReset() {
+    setIsInit(true);
     setStep(0);
     stopPlaying();
     const initMatrix = getValues("initMatrix") || [];
@@ -95,6 +96,7 @@ export default function Home() {
   };
 
   const startPlaying = () => {
+    setIsInit(false);
     handlePlay();
   };
 
@@ -135,8 +137,8 @@ export default function Home() {
               <Cell
                 key={y}
                 zoom={zoom}
-                coord={[x, y]}
-                onMouseEnter={(e) => handleMouseHover(e, x, y)}
+                isHovered={hoveredCoord[0] === x && hoveredCoord[1] === y}
+                onMouseEnter={() => handleMouseHover(x, y)}
                 active={watch(`matrix.${x}.${y}`) || false}
               />
             ))}
