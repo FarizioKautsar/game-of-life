@@ -4,7 +4,7 @@ import Cell from "./components/Cell";
 import { useForm } from "react-hook-form";
 import Button from "./components/Button";
 import { throttle } from "lodash";
-import { register } from "module";
+import { MdClear, MdNavigateNext, MdPause, MdPlayArrow, MdRefresh } from "react-icons/md";
 
 export const DEFAULT_CELL_SIZE = 20;
 
@@ -42,7 +42,7 @@ export default function Home() {
   const [zoom, setZoom] = useState<number>(0);
   const { watch, setValue, getValues } = useForm();
   const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE);
-  const [gridSize, setGridSize] = useState<number[]>([100, 100]);
+  const [gridSize, setGridSize] = useState<number[]>([0, 0]);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [xSize, ySize] = gridSize;
   const [lastIndices, setLastIndices] = useState<{ x: number; y: number }>({
@@ -83,7 +83,9 @@ export default function Home() {
 
   function nextStep() {
     setStep((prev) => prev + 1);
-    const newMatrix = getValues("matrix") || [];
+    const newMatrix = [...(getValues("matrix") || [])].map((xCoords) => [
+      ...(xCoords || []),
+    ]);
     for (const xStr in Array.from({ length: xSize })) {
       const x = Number(xStr);
       for (const yStr in Array.from({ length: ySize })) {
@@ -151,6 +153,7 @@ export default function Home() {
 
   const stopPlaying = () => {
     setIsPlaying(false);
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
@@ -169,7 +172,7 @@ export default function Home() {
     const handleWheel = (event: WheelEvent) => {
       setCellSize((prevSize) => {
         const newSize = prevSize + (event.deltaY > 0 ? -1 : 1);
-        return Math.max(10, Math.min(newSize, 50)); // Limit cell size between 5 and 50
+        return Math.max(5, Math.min(newSize, 50)); // Limit cell size between 5 and 50
       });
     };
 
@@ -183,16 +186,27 @@ export default function Home() {
     <main ref={mainRef} className="overflow-hidden h-screen">
       <div className="fixed top-4 left-4 z-20">
         <div className="flex items-center gap-1">
-          <Button onClick={handleNextStep}>Next</Button>
+          <Button onClick={handleNextStep}>
+            <MdNavigateNext className="mr-2" />
+            Next
+          </Button>
           <Button onClick={startPlaying} disabled={isPlaying}>
+            <MdPlayArrow className="mr-2" />
             Play
           </Button>
           <Button onClick={stopPlaying} disabled={!isPlaying}>
-            Stop
+            <MdPause className="mr-2" />
+            Pause
           </Button>
-          <Button onClick={handleReset}>Reset</Button>
-          <Button onClick={handleClear}>Clear</Button>
-          <span className="ml-3">Step: {step}</span>
+          <Button onClick={handleReset}>
+            <MdRefresh className="mr-2" />
+            Reset
+          </Button>
+          <Button onClick={handleClear}>
+            <MdClear className="mr-2" />
+            Clear
+          </Button>
+          <span className="ml-3">Gen {step}</span>
         </div>
       </div>
       <div
