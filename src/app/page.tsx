@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import Cell from "./components/Cell";
 import { useForm } from "react-hook-form";
 import Button from "./components/Button";
+import { debounce } from "lodash";
 
 export default function Home() {
   const [step, setStep] = useState<number>(0);
@@ -17,6 +18,8 @@ export default function Home() {
   });
   const [isInit, setIsInit] = useState(true);
 
+  const debouncedMouseHover = debounce(handleMouseHover, 10);
+
   function handleMouseHover(x: number, y: number) {
     if (isDrawing) {
       const matrix = [...(getValues("matrix") || [])];
@@ -25,9 +28,9 @@ export default function Home() {
         const points = getLinePoints(x, y, lastIndices.x, lastIndices.y);
         points.forEach((point) => {
           if (isInit) {
-            setValue(`initMatrix.${point.x}.${point.y}`, true);
+            setValue(`initMatrix.${point.x}.${point.y}`, !lastCell);
           }
-          setValue(`matrix.${point.x}.${point.y}`, true);
+          setValue(`matrix.${point.x}.${point.y}`, !lastCell);
         });
       }
     }
@@ -100,6 +103,7 @@ export default function Home() {
     setStep(0);
     stopPlaying();
     setValue("matrix", []);
+    setValue("initMatrix", []);
   }
 
   function handleReset() {
@@ -147,7 +151,7 @@ export default function Home() {
 
   return (
     <main>
-      <div className="fixed top-4 left-4 items-center">
+      <div className="fixed top-4 left-4 items-center z-20">
         <Button onClick={handleNextStep}>Next</Button>
         <Button onClick={startPlaying} className="ml-2" disabled={isPlaying}>
           Play
@@ -163,7 +167,10 @@ export default function Home() {
         </Button>
         <span className="ml-2">Step: {step}</span>
       </div>
-      <div>
+      <div
+        onMouseDown={() => setIsDrawing(true)}
+        onMouseUp={() => setIsDrawing(false)}
+      >
         {Array.from({ length: xSize }).map((_x, x) => (
           <div className="flex" key={x}>
             {Array.from({ length: ySize }).map((_y, y) => {
@@ -175,8 +182,6 @@ export default function Home() {
                   onMouseEnter={() => {
                     handleMouseHover(x, y);
                   }}
-                  onMouseDown={() => setIsDrawing(true)}
-                  onMouseUp={() => setIsDrawing(false)}
                   active={active}
                   onClick={() => active && handleToggleCell(x, y)}
                 />
