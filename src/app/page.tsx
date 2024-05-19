@@ -161,8 +161,6 @@ export default function Home() {
     setValue(`matrix.${x}.${y}`, !selectedCoord);
   }
 
-  const mainRef = useRef(null);
-
   // Handle wheel event to change cell size
   useEffect(() => {
     const handleWheel = (event: WheelEvent) => {
@@ -179,7 +177,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main ref={mainRef} className="overflow-hidden h-screen">
+    <main className="overflow-hidden h-screen">
       <div className="fixed top-4 left-4 z-20">
         <div className="flex items-center gap-1">
           <Button onClick={handleNextStep}>
