@@ -11,6 +11,7 @@ export default function Button({
   return (
     <button
       className={classNames(
+        "transition-all duration-100",
         "bg-slate-400 hover:bg-slate-600 active:bg-slate-700",
         "cursor-pointer rounded disabled:cursor-not-allowed",
         "disabled:bg-slate-800",
