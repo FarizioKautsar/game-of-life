@@ -2,6 +2,15 @@ import classNames from "classnames";
 import { MouseEvent } from "react";
 import { DEFAULT_CELL_SIZE } from "../page";
 
+function getRandomColorHex() {
+  // Generate a random number between 0 and 16777215
+  let randomColor = Math.floor(Math.random() * 16777216);
+  // Convert the number to a hexadecimal string and pad with leading zeros
+  let colorHex = randomColor.toString(16).padStart(6, '0');
+  // Return the color code prefixed with a '#'
+  return `#${colorHex}`;
+}
+
 export default function Cell({
   onMouseEnter,
   onMouseDown,
@@ -22,6 +31,7 @@ export default function Cell({
       style={{
         width: cellSize,
         height: cellSize,
+        // backgroundColor: active ? getRandomColorHex() : "transparent",
         // boxShadow: active ? "0px 0px 16px 0px white" : "none",
         zIndex: active ? 10 : 0,
       }}

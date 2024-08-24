@@ -139,7 +139,7 @@ export default function Home() {
 
     timeoutRef.current = setTimeout(() => {
       handlePlay();
-    }, 100);
+    }, 10);
   };
 
   const startPlaying = () => {
