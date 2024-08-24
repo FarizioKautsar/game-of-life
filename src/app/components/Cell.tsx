@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { MouseEvent } from "react";
-import { DEFAULT_CELL_SIZE } from "../page";
+// import { DEFAULT_CELL_SIZE } from "../page";
 
 function getRandomColorHex() {
   // Generate a random number between 0 and 16777215

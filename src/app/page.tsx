@@ -4,9 +4,13 @@ import Cell from "./components/Cell";
 import { useForm } from "react-hook-form";
 import Button from "./components/Button";
 import { throttle } from "lodash";
-import { MdClear, MdNavigateNext, MdPause, MdPlayArrow, MdRefresh } from "react-icons/md";
-
-export const DEFAULT_CELL_SIZE = 20;
+import {
+  MdClear,
+  MdNavigateNext,
+  MdPause,
+  MdPlayArrow,
+  MdRefresh,
+} from "react-icons/md";
 
 function getLinePoints(x0: number, y0: number, x1: number, y1: number) {
   const points: { x: number; y: number }[] = [];
@@ -38,6 +42,7 @@ function getLinePoints(x0: number, y0: number, x1: number, y1: number) {
 }
 
 export default function Home() {
+  const DEFAULT_CELL_SIZE = 20;
   const [step, setStep] = useState<number>(0);
   const { watch, setValue, getValues } = useForm();
   const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE);
